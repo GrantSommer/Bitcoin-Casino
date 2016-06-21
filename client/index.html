@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to Bitcoin Casino!</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="jquery.min.js"></script>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <button id="slots">Slot Machine</button>
+  <button id="game">Game</button>
+  <button id="Game2">:P</button>
+
+  <script>
+    var socket = io.connect();
+    var games = [];
+
+    $(function(){
+      $("button").each(function(){
+        $(this).addClass('btn');
+        $(this).addClass('btn-default');
+        $(this).click(function(){
+          socket.emit('start game',$(this).attr("id"));
+        });
+      });
+    });
+
+    socket.on('game',function(data){
+      window.location=data;
+    });
+    socket.on('alert',function(alert){
+      $("body").prepend('<div class=\'alert alert-'+alert.type+'\'><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+alert.content+'</div>');
+    });
+  </script>
+</body>
+</html>

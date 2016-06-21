@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<head>
+  <head>
+    <title>Slots - Bitcoin Casino</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <style>
+      body {
+        margin-top:60px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <h1>
+        <div class="numbers">
+          <span class="one well"></span>
+          <span class="two well"></span>
+          <span class="three well"></span>
+        </div>
+        <button class="btn btn-primary">Spin (0.00010000 &#579;)</button>
+        <span class="bitcoins"></span>
+        </h1>
+      </div>
+    </div>
+
+    <script>
+      var socket = io.connect();
+
+      socket.emit('ready for game');
+
+      $("button").click(function(){
+        socket.emit('spin');
+        $(".alert").fadeOut();
+      });
+
+      socket.on('numbers',function(nums){
+        $("span.one").text(nums[0]);
+        $("span.two").text(nums[1]);
+        $("span.three").text(nums[2]);
+      });
+
+      socket.on('bitcoins',function(am){
+        $(".bitcoins").html(am.toString().substring(0,9)+" &#579;");
+      });
+
+      socket.on('alert',function(alert){
+        $(".jumbotron").append('<div class=\'alert alert-'+alert.type+'\'><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>'+alert.content+'</div>');
+      });
+
+      socket.on('win',function(alert){
+        $(".jumbotron").append('<div class=\'alert alert-warning\'><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a> <strong>WIN!</strong> '+alert.title+' <i>'+alert.desc+'</i> +'+alert.num+' &#579;</div>');
+      });
+    </script>
+  </body>
+</head>
